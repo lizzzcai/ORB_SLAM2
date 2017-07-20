@@ -1,0 +1,28 @@
+./Examples/Monocular/mono_tum Vocabulary/ORBvoc.bin Examples/Monocular/TUM1.yaml /home/ubuntu/DATASET/rgbd_dataset_freiburg1_floor
+
+./Examples/Monocular/mono_tum Vocabulary/ORBvoc.bin Examples/Monocular/TUM1.yaml /home/ubuntu/DATASET/rgbd_dataset_freiburg1_xyz
+
+# Holland
+
+./Examples/Monocular/mono_tum Vocabulary/ORBvoc.bin Examples/Monocular/CM3.yaml /home/ubuntu/DATASET/slam_data/hollandroad
+
+# Holland1
+
+./Examples/Monocular/mono_tum Vocabulary/ORBvoc.bin Examples/Monocular/CM3undistort.yaml /home/ubuntu/DATASET/slam_data/hollandroad1
+
+#village
+
+./Examples/Monocular/mono_tum Vocabulary/ORBvoc.bin Examples/Monocular/phantom3.yaml /home/ubuntu/DATASET/slam_data/village-kfs
+
+#Holland_5000
+
+./Examples/Monocular/mono_tum Vocabulary/ORBvoc.bin Examples/Monocular/CM3undistort.yaml /home/ubuntu/DATASET/slam_data/2017_6_7_11_26_47_orb
+
+./Examples/Monocular/mono_tum Vocabulary/ORBvoc.txt Examples/Monocular/CM3undistort.yaml /home/ubuntu/DATASET/slam_data/2017_6_7_11_26_47_orb
+
+
+
+
+# ROS
+
+rosrun ORB_SLAM2 Mono Vocabulary/ORBvoc.bin Examples/Monocular/CM3undistort.yaml
