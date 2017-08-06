@@ -26,3 +26,13 @@
 # ROS
 
 rosrun ORB_SLAM2 Mono Vocabulary/ORBvoc.bin Examples/Monocular/CM3undistort.yaml
+rosrun ORB_SLAM2 Mono Vocabulary/ORBvoc.txt Examples/Monocular/CM3undistort.yaml
+
+
+# ROS bag
+
+rosrun ORB_SLAM2 Mono Vocabulary/ORBvoc.txt Examples/Monocular/TUM1.yaml /camera/image_raw:=/camera/rgb/image_color
+
+rosbag play --pause /home/ubuntu/DATASET/rosbagdata/floor/rgbd_dataset_freiburg1_floor.bag
+
+

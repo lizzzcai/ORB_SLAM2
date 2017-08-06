@@ -28,6 +28,10 @@
 
 #include<System.h>
 
+#include"ViewerAR.h"
+
+ORB_SLAM2::ViewerAR viewerAR;
+
 using namespace std;
 
 void LoadImages(const string &strFile, vector<string> &vstrImageFilenames,
@@ -121,6 +125,10 @@ int main(int argc, char **argv)
 
     // Save camera trajectory
     SLAM.SaveKeyFrameTrajectoryTUM(string(argv[3])+"/"+"KeyFrameTrajectory.txt");
+
+    // test save map point
+    // pose + normal
+    SLAM.SaveMapPointTUM(string(argv[3])+"/"+"MapPoint.txt");
 
     return 0;
 }

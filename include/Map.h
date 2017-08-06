@@ -59,6 +59,14 @@ public:
 
     void clear();
 
+
+    
+/*
+    void Map::Save ( const string &filename );
+    void Map::GetMapPointsIdx();
+    void Map::SaveKeyFrame( ofstream& f, KeyFrame* kf );
+    void Map::SaveMapPoint( ofstream& f, MapPoint* mp );
+*/
     vector<KeyFrame*> mvpKeyFrameOrigins;
 
     std::mutex mMutexMapUpdate;

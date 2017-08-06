@@ -24,3 +24,12 @@ build/
 *~
 lib/
 
+Examples/ROS/ORB_SLAM2/ORB_ROS.config
+Examples/ROS/ORB_SLAM2/ORB_ROS.creator
+Examples/ROS/ORB_SLAM2/ORB_ROS.files
+Examples/ROS/ORB_SLAM2/ORB_ROS.includes
+
+Examples/ROS/ORB_SLAM2/ORB_ROS.creator.user
+Examples/ROS/build-ORB_SLAM2-Desktop_Qt_5_8_0_GCC_64bit-Default/
+
+

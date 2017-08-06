@@ -68,6 +68,8 @@ src/KeyFrameDatabase.cc
 src/Sim3Solver.cc
 src/Initializer.cc
 src/Viewer.cc
+src/ViewerAR.cc
+#src/ros_mono_ar.cc
 )
 
 target_link_libraries(${PROJECT_NAME}
