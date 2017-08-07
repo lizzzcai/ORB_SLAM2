@@ -113,6 +113,8 @@ System::System(const string &strVocFile, const string &strSettingsFile, const eS
         mpTracker->SetViewer(mpViewer);
     }
 
+    mpViewerAR = new ViewerAR();
+
     //Set pointers between threads
     mpTracker->SetLocalMapper(mpLocalMapper);
     mpTracker->SetLoopClosing(mpLoopCloser);
@@ -405,7 +407,7 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
     cout << endl << "Saving keyframe trajectory to " << filename << " ..." << endl;
 
     vector<KeyFrame*> vpKFs = mpMap->GetAllKeyFrames();
-    //vector<MapPoint*> vpMPs = mpMap->GetAllMapPoints();
+
     sort(vpKFs.begin(),vpKFs.end(),KeyFrame::lId);
 
     // Transform all keyframes so that the first keyframe is at the origin.
@@ -430,6 +432,10 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
         cv::Mat t = pKF->GetCameraCenter();
         f << setprecision(6) << pKF->mTimeStamp << setprecision(7) << " " << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
           << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
+        /* x is positive rightward
+           y is positive downward
+           z is positive frontward
+        */
     }
 
     f.close();
@@ -467,47 +473,56 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
 
 }
 
-void System::SaveMapPointTUM(const string &filename)
+// test save mappoint
+
+void System::SaveKeyMapPointTUM(const string &filename)
 {
     cout << endl << "Saving MapPoint to " << filename << " ..." << endl;
 
-    vector<MapPoint*> vpMPs = mpMap->GetAllMapPoints();
-    //sort(vpKFs.begin(),vpKFs.end(),KeyFrame::lId);
+    vector<KeyFrame*> vpKFs = mpMap->GetAllKeyFrames();
+    sort(vpKFs.begin(),vpKFs.end(),KeyFrame::lId);
 
-    // Transform all keyframes so that the first keyframe is at the origin.
-    // After a loop closure the first keyframe might not be at the origin.
-    //cv::Mat Two = vpKFs[0]->GetPoseInverse();
+    ofstream f;
+    f.open(filename.c_str());
+    f << fixed;
 
-    // test for mappoint
+    size_t numMP = 0;
 
-    cout << "Total MapPoints number is :" << vpMPs.size() << endl;
-
-    ofstream f1;
-    f1.open(filename.c_str());
-    f1 << fixed;
-
-    for(size_t i=0; i<vpMPs.size(); i++)
+    for(vector<KeyFrame*>::iterator vit=vpKFs.begin(); vit!=vpKFs.end(); vit++)
     {
+        KeyFrame* pKF = *vit;
+        vector<MapPoint*> vpMapPoints = pKF->GetMapPointMatches();
+        //cout << endl << "for keyframe: " << size_t(*vit) << endl;
+        for(vector<MapPoint*>::iterator vitMP=vpMapPoints.begin(), vendMP=vpMapPoints.end(); vitMP!=vendMP; vitMP++)
+        {
+            MapPoint* pMP = *vitMP;
+            if(!pMP)
+                continue;
+            if(pMP->isBad())
+                continue;
+            cv::Mat t = pMP->GetWorldPos();
+            cv::Mat n = pMP->GetNormal();
+            f << setprecision(7) << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
+            << " " << n.at<float>(0) << " " << n.at<float>(1) << " " << n.at<float>(2) << endl;
+            numMP = numMP + 1;
+        }
 
-        MapPoint* pMP = vpMPs[i];
-
-       // pKF->SetPose(pKF->GetPose()*Two);
-
-        if(pMP->isBad())
-            continue;
-
-        cv::Mat t = pMP->GetWorldPos();
-        cv::Mat n = pMP->GetNormal();
-        f1 << setprecision(7) << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
-          << " " << n.at<float>(0) << " " << n.at<float>(1) << " " << n.at<float>(2) << endl;
+       // numMP = numMP + vpMapPoints.size();
 
     }
 
-    f1.close();
+    f.close();
     cout << endl << "mappoint saved!" << endl;
-
+    cout << endl << "MapPoints number: " << numMP << " in "<< vpKFs.size() <<" Keyframes"<< endl;
+    cout << endl << "average mappoint per keyframe: "<< numMP/vpKFs.size() << endl;
 
 }
+
+
+// test save mappoint
+
+
+
 
 // test save plane
 
@@ -515,14 +530,9 @@ void System::SaveKeyPlaneTUM(const string &filename)
 {
     cout << endl << "Saving KeyPlane to " << filename << " ..." << endl;
 
+
     vector<KeyFrame*> vpKFs = mpMap->GetAllKeyFrames();
     sort(vpKFs.begin(),vpKFs.end(),KeyFrame::lId);
-
-    // Transform all keyframes so that the first keyframe is at the origin.
-    // After a loop closure the first keyframe might not be at the origin.
-    //cv::Mat Two = vpKFs[0]->GetPoseInverse();
-
-    // test for mappoint
 
     cout << "Total KeyPlane number is :" << vpKFs.size() << endl;
 
@@ -530,30 +540,39 @@ void System::SaveKeyPlaneTUM(const string &filename)
     f.open(filename.c_str());
     f << fixed;
 
-    for(size_t i=0; i<vpKFs.size(); i++)
+    for(vector<KeyFrame*>::iterator vit=vpKFs.begin(); vit!=vpKFs.end(); vit++)
     {
+        KeyFrame* pKF = *vit;
 
-        MapPoint* pMP = vpMPs[i];
+        cv::Mat Tcw = pKF->GetPose();
 
-       // pKF->SetPose(pKF->GetPose()*Two);
+        vector<MapPoint*> vMPs = pKF->GetMapPointMatches();
 
-        if(pMP->isBad())
-            continue;
+        Plane* pPlane = mpViewerAR->DetectPlane(Tcw,vMPs,50);
+        if(pPlane)
+        {
+            cout << "KeyPlane detected"<< endl;
+            cv::Mat t  = pPlane->Tpw;
+            f << setprecision(7) << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)<< " " << t.at<float>(3)
+              << " " << t.at<float>(4) << " " << t.at<float>(5) << " " << t.at<float>(6)<< " " << t.at<float>(7)
+              << " " << t.at<float>(8) << " " << t.at<float>(9) << " " << t.at<float>(10)<< " " << t.at<float>(11)
+              << " " << t.at<float>(12) << " " << t.at<float>(13) << " " << t.at<float>(14)<< " " << t.at<float>(15) << endl;
 
-        cv::Mat t = pMP->GetWorldPos();
-        cv::Mat n = pMP->GetNormal();
-        f << setprecision(7) << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
-          << " " << n.at<float>(0) << " " << n.at<float>(1) << " " << n.at<float>(2) << endl;
-
+        }
+        else
+        {
+            cout << "No plane detected. Point the camera to a planar region." << endl;
+        }
     }
+
 
     f.close();
     cout << endl << "keyplane saved!" << endl;
 
-
 }
 
 // test save plane
+
 
 void System::SaveTrajectoryKITTI(const string &filename)
 {

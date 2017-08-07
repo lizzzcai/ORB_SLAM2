@@ -583,6 +583,8 @@ void Tracking::MonocularInitialization()
 
             return;
         }
+        else
+            cout << __FUNCTION__ << "The Key Frame-s points are less: " << mCurrentFrame.mvKeys.size() << endl;
     }
     else
     {
@@ -602,6 +604,8 @@ void Tracking::MonocularInitialization()
         // Check if there are enough correspondences
         if(nmatches<100)
         {
+            //cout << __FUNCTION__;
+            cout <<"ORB extraction : No enough correspondesnces(<100) " << nmatches << endl;
             delete mpInitializer;
             mpInitializer = static_cast<Initializer*>(NULL);
             return;
@@ -636,6 +640,7 @@ void Tracking::MonocularInitialization()
 
 void Tracking::CreateInitialMapMonocular()
 {
+    cout << __FUNCTION__ << ": Starting Initial Map Creation..." << endl;
     // Create KeyFrames
     KeyFrame* pKFini = new KeyFrame(mInitialFrame,mpMap,mpKeyFrameDB);
     KeyFrame* pKFcur = new KeyFrame(mCurrentFrame,mpMap,mpKeyFrameDB);
@@ -691,7 +696,8 @@ void Tracking::CreateInitialMapMonocular()
 
     if(medianDepth<0 || pKFcur->TrackedMapPoints(1)<100)
     {
-        cout << "Wrong initialization, reseting..." << endl;
+        cout << "Wrong initialization, reseting...map points(100): " << pKFcur->TrackedMapPoints(1)
+                << " medianDepth = " << medianDepth << endl;
         Reset();
         return;
     }

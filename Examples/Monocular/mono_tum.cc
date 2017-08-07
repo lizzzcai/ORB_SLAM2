@@ -27,10 +27,8 @@
 #include<opencv2/core/core.hpp>
 
 #include<System.h>
+//#include<ViewerAR.h>
 
-#include"ViewerAR.h"
-
-ORB_SLAM2::ViewerAR viewerAR;
 
 using namespace std;
 
@@ -123,13 +121,15 @@ int main(int argc, char **argv)
     cout << "median tracking time: " << vTimesTrack[nImages/2] << endl;
     cout << "mean tracking time: " << totaltime/nImages << endl;
 
+
     // Save camera trajectory
     SLAM.SaveKeyFrameTrajectoryTUM(string(argv[3])+"/"+"KeyFrameTrajectory.txt");
 
     // test save map point
     // pose + normal
-    SLAM.SaveMapPointTUM(string(argv[3])+"/"+"MapPoint.txt");
+    SLAM.SaveKeyMapPointTUM(string(argv[3])+"/"+"MapPoint.txt");
 
+    SLAM.SaveKeyPlaneTUM(string(argv[3])+"/"+"KeyPlane.txt");
     return 0;
 }
 

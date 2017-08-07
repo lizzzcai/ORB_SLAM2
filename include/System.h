@@ -35,6 +35,7 @@
 #include "KeyFrameDatabase.h"
 #include "ORBVocabulary.h"
 #include "Viewer.h"
+#include "ViewerAR.h"
 
 namespace ORB_SLAM2
 {
@@ -45,6 +46,7 @@ class Map;
 class Tracking;
 class LocalMapping;
 class LoopClosing;
+class ViewerAR;
 
 class System
 {
@@ -113,7 +115,7 @@ public:
     void SaveTrajectoryKITTI(const string &filename);
 
     //test
-    void SaveMapPointTUM(const string &filename);
+    void SaveKeyMapPointTUM(const string &filename);
     void SaveKeyPlaneTUM(const string &filename);
     //test
 
@@ -153,6 +155,8 @@ private:
 
     // The viewer draws the map and the current camera pose. It uses Pangolin.
     Viewer* mpViewer;
+
+    ViewerAR* mpViewerAR;
 
     FrameDrawer* mpFrameDrawer;
     MapDrawer* mpMapDrawer;

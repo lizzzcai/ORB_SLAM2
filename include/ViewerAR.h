@@ -31,6 +31,8 @@
 namespace ORB_SLAM2
 {
 
+class System;
+
 class Plane
 {
 public:
@@ -81,6 +83,8 @@ public:
     void GetImagePose(cv::Mat &im, cv::Mat &Tcw, int &status,
                       std::vector<cv::KeyPoint> &vKeys,  std::vector<MapPoint*> &vMPs);
 
+    Plane* DetectPlane(const cv::Mat Tcw, const std::vector<MapPoint*> &vMPs, const int iterations=50);
+
 private:
 
     //SLAM
@@ -95,7 +99,7 @@ private:
     void DrawPlane(Plane* pPlane, int ndivs, float ndivsize);
     void DrawTrackedPoints(const std::vector<cv::KeyPoint> &vKeys, const std::vector<MapPoint*> &vMPs, cv::Mat &im);
 
-    Plane* DetectPlane(const cv::Mat Tcw, const std::vector<MapPoint*> &vMPs, const int iterations=50);
+    //Plane* DetectPlane(const cv::Mat Tcw, const std::vector<MapPoint*> &vMPs, const int iterations=50);
 
     // frame rate
     float mFPS, mT;

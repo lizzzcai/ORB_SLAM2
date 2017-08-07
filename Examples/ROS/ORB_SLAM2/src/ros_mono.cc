@@ -73,6 +73,13 @@ int main(int argc, char **argv)
 
     // Save camera trajectory
     SLAM.SaveKeyFrameTrajectoryTUM("results/KeyFrameTrajectory.txt");
+    
+    // test save map point, plane
+    // pose + normal
+    SLAM.SaveKeyMapPointTUM("results/MapPoint.txt");
+
+    SLAM.SaveKeyPlaneTUM("results/KeyPlane.txt");
+    // test save map point, plane
 
     ros::shutdown();
 
