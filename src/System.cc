@@ -430,8 +430,11 @@ void System::SaveKeyFrameTrajectoryTUM(const string &filename)
         cv::Mat R = pKF->GetRotation().t();
         vector<float> q = Converter::toQuaternion(R);
         cv::Mat t = pKF->GetCameraCenter();
+        //f << setprecision(6) << pKF->mTimeStamp << setprecision(7) << " " << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
+        // << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
+        // x, y, z, w, rx, ry ,rz
         f << setprecision(6) << pKF->mTimeStamp << setprecision(7) << " " << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)
-          << " " << q[0] << " " << q[1] << " " << q[2] << " " << q[3] << endl;
+          << " " << q[3] << " " << q[0] << " " << q[1] << " " << q[2] << endl;
         /* x is positive rightward
            y is positive downward
            z is positive frontward
@@ -552,11 +555,14 @@ void System::SaveKeyPlaneTUM(const string &filename)
         if(pPlane)
         {
             cout << "KeyPlane detected"<< endl;
-            cv::Mat t  = pPlane->Tpw;
-            f << setprecision(7) << t.at<float>(0) << " " << t.at<float>(1) << " " << t.at<float>(2)<< " " << t.at<float>(3)
-              << " " << t.at<float>(4) << " " << t.at<float>(5) << " " << t.at<float>(6)<< " " << t.at<float>(7)
-              << " " << t.at<float>(8) << " " << t.at<float>(9) << " " << t.at<float>(10)<< " " << t.at<float>(11)
-              << " " << t.at<float>(12) << " " << t.at<float>(13) << " " << t.at<float>(14)<< " " << t.at<float>(15) << endl;
+            cv::Mat t  = pPlane->o;
+            cv::Mat R  = pPlane->Tpw;
+            t.copyTo(R.col(3).rowRange(0,3));
+
+            f << setprecision(7) << R.at<float>(0,0) << " " << R.at<float>(1,0) << " " << R.at<float>(2,0)<< " " << R.at<float>(3,0)
+              << " " << R.at<float>(0,1) << " " << R.at<float>(1,1) << " " << R.at<float>(2,1)<< " " << R.at<float>(3,1)
+              << " " << R.at<float>(0,2) << " " << R.at<float>(1,2) << " " << R.at<float>(2,2)<< " " << R.at<float>(3,2)
+              << " " << R.at<float>(0,3) << " " << R.at<float>(1,3) << " " << R.at<float>(2,3)<< " " << R.at<float>(3,3) << endl;
 
         }
         else
