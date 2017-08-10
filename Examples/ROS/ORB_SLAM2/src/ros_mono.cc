@@ -24,13 +24,18 @@
 #include <algorithm>
 #include <fstream>
 #include <chrono>
+
 #include <ros/ros.h>
 #include <cv_bridge/cv_bridge.h>
 #include <message_filters/subscriber.h>
 #include <message_filters/time_synchronizer.h>
 #include <message_filters/sync_policies/approximate_time.h>
-#include "geometry_msgs/TransformStamped.h"
+
+#include<opencv2/core/core.hpp>
+
 #include "../../../include/System.h"
+//add for publish pose in TF
+#include "geometry_msgs/TransformStamped.h"
 #include "tf/transform_datatypes.h"
 #include <tf/transform_broadcaster.h>
 
@@ -100,6 +105,11 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
         return;
     }
 
+//        mpSLAM->TrackMonocular(cv_ptr->image,cv_ptr->header.stamp.toSec());
+
+
+// add publish pose in TF
+
     cv::Mat pose = mpSLAM->TrackMonocular(cv_ptr->image,cv_ptr->header.stamp.toSec());
 
     if (pose.empty())
@@ -140,5 +150,7 @@ void ImageGrabber::GrabImage(const sensor_msgs::ImageConstPtr& msg)
 br.sendTransform(tf::StampedTransform(transform, ros::Time::now(), "camera_link", "camera_pose"));
 
 }
+
+
 
 
